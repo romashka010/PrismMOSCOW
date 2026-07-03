@@ -9,8 +9,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
-    <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -31,7 +29,7 @@
             padding: 0;
             height: 100%;
             overflow: hidden;
-            background-color: #fafafa;
+            background-color: #fafafa !important;
         }
 
         .scroll-container {
@@ -39,6 +37,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
+            background-color: #fafafa;
         }
 
         .slide-section {
@@ -50,12 +49,13 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            will-change: transform, opacity, filter;
+            will-change: transform, opacity;
             transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
+            background-color: #fafafa;
         }
 
         .premium-fade {
-            will-change: transform, opacity, filter;
+            will-change: transform, opacity;
             transition: none;
         }
 
@@ -146,9 +146,16 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+
+        .modal-overlay {
+            transition: opacity 0.4s ease, backdrop-filter 0.4s ease;
+        }
+        .modal-content {
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+        }
     </style>
 </head>
-<body class="relative text-zinc-950 font-sans antialiased selection:bg-rose-500 selection:text-white">
+<body class="relative text-zinc-950 font-sans antialiased selection:bg-rose-500 selection:text-white bg-[#fafafa]">
 
     <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-zinc-100 transition-all duration-300">
         <div class="w-full px-6 sm:px-12 flex items-center justify-between h-20">
@@ -166,8 +173,12 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-4">
-                <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-widest border border-zinc-200/60 rounded-full px-3 py-1">
+            <div class="flex items-center gap-3 sm:gap-6">
+                <button id="btn-profile-trigger" class="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-zinc-200/80 bg-white hover:bg-zinc-50 transition-all text-xs font-semibold shadow-sm active:scale-95">
+                    <span id="header-avatar-dot" class="w-2.5 h-2.5 rounded-full bg-zinc-400"></span>
+                    <span id="header-profile-name">Войти</span>
+                </button>
+                <span class="hidden md:inline-block text-[10px] text-zinc-400 font-bold uppercase tracking-widest border border-zinc-200/60 rounded-full px-3 py-1">
                     Prism • 2026
                 </span>
             </div>
@@ -176,10 +187,10 @@
 
     <div id="toast-notification" class="hidden fixed bottom-10 left-1/2 -translate-x-1/2 z-50 bg-zinc-950 text-white px-6 py-4 rounded-2xl shadow-2xl border border-zinc-800 flex items-center gap-3 toast-enter">
         <span class="text-lg">⏳</span>
-        <span class="text-xs font-semibold tracking-wide">Модуль интерактивной карты подготавливается к запуску</span>
+        <span id="toast-text" class="text-xs font-semibold tracking-wide">Модуль интерактивной карты подготавливается к запуску</span>
     </div>
 
-    <div id="main-slider" class="scroll-container">
+    <div id="main-slider" class="scroll-container bg-[#fafafa]">
 
         <section id="slide-hero" class="slide-section px-6 bg-white z-30">
             <div class="absolute inset-0 bg-[radial-gradient(#e4e4e7_1.2px,transparent_1.2px)] [background-size:24px_24px] opacity-40 pointer-events-none"></div>
@@ -198,27 +209,57 @@
             </div>
 
             <div class="absolute bottom-10 flex flex-col items-center gap-2 cursor-pointer text-zinc-400 hover:text-zinc-950 transition-colors premium-fade" data-speed="0.6" onclick="smoothScrollTo(1)">
-                <span class="text-[9px] uppercase tracking-[0.3em] font-bold">Перейти к карте</span>
+                <span class="text-[9px] uppercase tracking-[0.3em] font-bold">Перейти к картам</span>
                 <div class="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center transition-transform animate-bounce">
                     ↓
                 </div>
             </div>
         </section>
 
-        <section id="slide-portal" class="slide-section px-6 bg-neutral-50 z-20 opacity-0 pointer-events-none border-t border-zinc-100">
+        <section id="slide-portal" class="slide-section px-6 bg-neutral-50 z-20 opacity-0 pointer-events-none border-t border-zinc-100 overflow-y-auto pt-24 pb-20 md:py-0">
             <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-rose-200/10 rounded-full blur-[120px] pointer-events-none"></div>
             <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-amber-200/10 rounded-full blur-[120px] pointer-events-none"></div>
 
-            <div class="relative max-w-4xl mx-auto text-center space-y-10 flex flex-col items-center premium-fade" data-speed="1.0">
-                <div class="w-16 h-16 rounded-full bg-zinc-950 text-white flex items-center justify-center text-2xl shadow-lg shadow-zinc-950/15 select-none">
+            <div class="relative max-w-5xl mx-auto text-center space-y-8 flex flex-col items-center premium-fade" data-speed="1.0">
+                <div class="w-14 h-14 rounded-full bg-zinc-950 text-white flex items-center justify-center text-xl shadow-lg shadow-zinc-950/15 select-none">
                     🗺️
                 </div>
 
-                <p class="font-sans text-xl sm:text-2xl md:text-3xl text-zinc-500 leading-relaxed font-light tracking-wide max-w-3xl">
+                <p class="font-sans text-lg sm:text-2xl md:text-3xl text-zinc-500 leading-relaxed font-light tracking-wide max-w-3xl px-4">
                     Prism собрал самые живописные ракурсы, скрытые зеленые дворики и культурные центры в единую интерактивную карту столицы.
                 </p>
 
-                <div class="pt-4 space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-3xl px-4 pt-2">
+                    <div class="bg-white rounded-2xl p-5 border border-zinc-200/60 shadow-sm text-left flex items-start justify-between gap-4 group hover:shadow-md transition-all">
+                        <div>
+                            <span class="text-[9px] font-bold uppercase tracking-wider text-rose-500">Культура</span>
+                            <h4 class="font-black text-zinc-950 text-base mt-0.5">ГЭС-2</h4>
+                            <p class="text-xs text-zinc-400">Болотная набережная, 15</p>
+                            <p class="text-xs text-zinc-500 mt-2 leading-relaxed">Огромное светлое арт-пространство с берёзовой рощей во дворе.</p>
+                        </div>
+                        <button onclick="toggleLike(1, 'ГЭС-2', 'Болотная набережная, 15')" id="like-btn-1" class="w-10 h-10 rounded-full bg-zinc-50 hover:bg-rose-50 border border-zinc-200/80 hover:border-rose-200 text-zinc-400 hover:text-rose-500 flex items-center justify-center transition-all shrink-0">
+                            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-5 border border-zinc-200/60 shadow-sm text-left flex items-start justify-between gap-4 group hover:shadow-md transition-all">
+                        <div>
+                            <span class="text-[9px] font-bold uppercase tracking-wider text-amber-500">Романтика</span>
+                            <h4 class="font-black text-zinc-950 text-base mt-0.5">Смотровая РАН</h4>
+                            <p class="text-xs text-zinc-400">Ленинский проспект, 32а</p>
+                            <p class="text-xs text-zinc-500 mt-2 leading-relaxed">Потрясающий панорамный вид на Москву-Сити и Москву-реку без толп.</p>
+                        </div>
+                        <button onclick="toggleLike(2, 'Смотровая РАН', 'Ленинский проспект, 32а')" id="like-btn-2" class="w-10 h-10 rounded-full bg-zinc-50 hover:bg-rose-50 border border-zinc-200/80 hover:border-rose-200 text-zinc-400 hover:text-rose-500 flex items-center justify-center transition-all shrink-0">
+                            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-6 space-y-4">
                     <button id="btn-open-map" class="relative px-10 py-5 rounded-2xl bg-zinc-950 text-white text-xs font-black uppercase tracking-[0.25em] hover:bg-rose-600 transition-all duration-300 shadow-xl hover:shadow-rose-500/10 hover:scale-105 active:scale-95">
                         Открыть интерактивную карту
                     </button>
@@ -294,6 +335,74 @@
 
     </div>
 
+    <div id="profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/40 backdrop-blur-sm modal-overlay opacity-0">
+        <div class="bg-white w-full max-w-md rounded-3xl overflow-hidden shadow-2xl border border-zinc-100 flex flex-col modal-content translate-y-8 duration-300">
+
+            <div class="p-6 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/50">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-lg">👤</span>
+                    <h3 class="font-black text-lg text-zinc-900">Профиль Prism</h3>
+                </div>
+                <button onclick="closeProfileModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-500 flex items-center justify-center transition-all active:scale-90">
+                    ✕
+                </button>
+            </div>
+
+            <div class="p-6 space-y-5">
+
+                <div id="profile-form-state" class="space-y-4">
+                    <p class="text-xs text-zinc-500 leading-relaxed">
+                        Введите своё имя, чтобы мы могли персонализировать ваш путеводитель и сохранять любимые адреса.
+                    </p>
+                    <div>
+                        <label class="block text-[9px] font-black text-zinc-400 uppercase tracking-wider mb-1.5">Ваше Имя</label>
+                        <input id="input-username" type="text" placeholder="Иван" maxlength="15" class="w-full bg-zinc-50 border border-zinc-200 px-4 py-2.5 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all text-zinc-800" />
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black text-zinc-400 uppercase tracking-wider mb-1.5">Цвет аватара</label>
+                        <div id="register-colors" class="flex gap-2.5 pt-1">
+                        </div>
+                    </div>
+                    <button onclick="saveUserProfile()" class="w-full py-3 bg-zinc-950 hover:bg-rose-600 text-white text-xs font-black uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 pt-3.5">
+                        Создать профиль
+                    </button>
+                </div>
+
+                <div id="profile-cabinet-state" class="hidden space-y-5">
+                    <div class="flex items-center gap-3 p-4 bg-zinc-50 rounded-2xl border border-zinc-100">
+                        <div id="cabinet-avatar" class="w-12 h-12 rounded-full text-white font-bold flex items-center justify-center text-lg select-none">
+                            И
+                        </div>
+                        <div>
+                            <h4 id="cabinet-name" class="font-black text-zinc-950 text-sm">Имя пользователя</h4>
+                            <span class="text-[9px] text-zinc-400 font-bold uppercase tracking-wider block">Пользователь Prism</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[9px] font-black text-zinc-400 uppercase tracking-wider mb-1.5">Изменить цвет профиля</label>
+                        <div id="cabinet-colors" class="flex gap-2.5 pt-1">
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <h5 class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Избранные адреса</h5>
+                            <span id="favorites-count" class="text-[10px] font-bold text-rose-500">0</span>
+                        </div>
+                        <div id="favorites-list" class="max-h-48 overflow-y-auto space-y-2 pr-1 scrollbar-none"></div>
+                    </div>
+
+                    <button onclick="logoutUserProfile()" class="w-full py-2.5 border border-zinc-200 hover:border-rose-200 text-zinc-500 hover:text-rose-600 text-[10px] font-bold uppercase tracking-wider rounded-xl transition-all active:scale-95">
+                        Выйти из профиля
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
     <script>
         let currentY = 0;
         let targetY = 0;
@@ -302,6 +411,8 @@
         const scrollSensitivity = 0.002;
         const isMagnetActive = true;
         let snapTimeout = null;
+
+        const isMobile = window.innerWidth < 768;
 
         function lerp(start, end, factor) {
             return start + (end - start) * factor;
@@ -349,11 +460,9 @@
                         const speed = parseFloat(el.getAttribute('data-speed') || '1.0');
                         const translateY = -progress * 120 * speed;
                         const scale = 1 - (progress * 0.04);
-                        const blur = progress * 15 * speed;
 
                         el.style.transform = `translateY(${translateY}px) scale(${scale})`;
                         el.style.opacity = opacityValue;
-                        el.style.filter = `blur(${blur}px)`;
                     });
 
                 } else if (index === currentPage + 1) {
@@ -365,11 +474,9 @@
                         const speed = parseFloat(el.getAttribute('data-speed') || '1.0');
                         const translateY = (1 - progress) * 120 * speed;
                         const scale = 0.96 + (progress * 0.04);
-                        const blur = (1 - progress) * 15 * speed;
 
                         el.style.transform = `translateY(${translateY}px) scale(${scale})`;
                         el.style.opacity = opacityValue;
-                        el.style.filter = `blur(${blur}px)`;
                     });
                 }
             });
@@ -419,15 +526,236 @@
             targetY = slideIndex;
         }
 
-        const btnOpenMap = document.getElementById('btn-open-map');
         const toast = document.getElementById('toast-notification');
+        const toastText = document.getElementById('toast-text');
 
-        btnOpenMap.addEventListener('click', () => {
+        function showToast(text) {
+            toastText.textContent = text;
             toast.classList.remove('hidden');
             setTimeout(() => {
                 toast.classList.add('hidden');
             }, 3000);
+        }
+
+        const btnOpenMap = document.getElementById('btn-open-map');
+        btnOpenMap.addEventListener('click', () => {
+            showToast("Модуль интерактивной карты подготавливается к запуску");
         });
+
+
+
+        let userProfile = {
+            name: "",
+            color: "bg-rose-500",
+            likedPlaces: []
+        };
+
+        let selectedColor = "bg-rose-500";
+
+        const profileColors = ["bg-rose-500", "bg-purple-500", "bg-amber-500", "bg-emerald-500", "bg-sky-500"];
+
+        function renderColorSelectors(containerId, activeColor, onSelectCallbackName) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            container.innerHTML = profileColors.map(colorClass => {
+                const isActive = colorClass === activeColor;
+                const activeClasses = "ring-2 ring-offset-2 ring-zinc-950 scale-110 z-10 shadow-sm";
+                const inactiveClasses = "ring-2 ring-transparent hover:scale-105";
+
+                return `
+                    <button type="button"
+                        onclick="${onSelectCallbackName}('${colorClass}')"
+                        class="w-7 h-7 rounded-full ${colorClass} border-2 border-white transition-all active:scale-90 ${isActive ? activeClasses : inactiveClasses}">
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function initProfile() {
+            const savedProfile = localStorage.getItem("prism_user_profile");
+            if (savedProfile) {
+                userProfile = JSON.parse(savedProfile);
+                selectedColor = userProfile.color;
+                updateProfileHeader();
+                updateLikeButtonsState();
+            }
+            renderColorSelectors('register-colors', selectedColor, 'selectAvatarColor');
+        }
+
+        function updateProfileHeader() {
+            const headerName = document.getElementById('header-profile-name');
+            const avatarDot = document.getElementById('header-avatar-dot');
+
+            if (userProfile.name) {
+                headerName.textContent = userProfile.name;
+                avatarDot.className = `w-2.5 h-2.5 rounded-full ${userProfile.color}`;
+            } else {
+                headerName.textContent = "Войти";
+                avatarDot.className = "w-2.5 h-2.5 rounded-full bg-zinc-400";
+            }
+        }
+
+        function updateLikeButtonsState() {
+            [1, 2].forEach(id => {
+                const btn = document.getElementById(`like-btn-${id}`);
+                if (!btn) return;
+                const isLiked = userProfile.likedPlaces.some(place => place.id === id);
+                if (isLiked) {
+                    btn.classList.add('text-rose-500', 'bg-rose-50/50', 'border-rose-200');
+                    btn.classList.remove('text-zinc-400', 'bg-zinc-50', 'border-zinc-200/80');
+                } else {
+                    btn.classList.remove('text-rose-500', 'bg-rose-50/50', 'border-rose-200');
+                    btn.classList.add('text-zinc-400', 'bg-zinc-50', 'border-zinc-200/80');
+                }
+            });
+        }
+
+        function toggleLike(id, title, address) {
+            if (!userProfile.name) {
+                showToast("Пожалуйста, войдите в профиль, чтобы сохранять адреса");
+                openProfileModal();
+                return;
+            }
+
+            const index = userProfile.likedPlaces.findIndex(place => place.id === id);
+            if (index > -1) {
+                userProfile.likedPlaces.splice(index, 1);
+                showToast(`Удалено из избранного: ${title}`);
+            } else {
+                userProfile.likedPlaces.push({ id, title, address });
+                showToast(`Добавлено в избранное: ${title}`);
+            }
+
+            localStorage.setItem("prism_user_profile", JSON.stringify(userProfile));
+            updateLikeButtonsState();
+            renderFavoritesList();
+        }
+
+        function selectAvatarColor(colorClass) {
+            selectedColor = colorClass;
+            renderColorSelectors('register-colors', colorClass, 'selectAvatarColor');
+        }
+
+        function changeCabinetColor(colorClass) {
+            userProfile.color = colorClass;
+            selectedColor = colorClass;
+
+            localStorage.setItem("prism_user_profile", JSON.stringify(userProfile));
+
+            updateProfileHeader();
+
+            const avatar = document.getElementById('cabinet-avatar');
+            avatar.className = `w-12 h-12 rounded-full text-white font-bold flex items-center justify-center text-lg select-none ${colorClass}`;
+
+            renderColorSelectors('cabinet-colors', colorClass, 'changeCabinetColor');
+            showToast("Цвет профиля обновлен");
+        }
+
+        function saveUserProfile() {
+            const nameInput = document.getElementById('input-username');
+            const name = nameInput.value.trim();
+
+            if (!name) {
+                showToast("Введите ваше имя");
+                nameInput.focus();
+                return;
+            }
+
+            userProfile.name = name;
+            userProfile.color = selectedColor;
+
+            localStorage.setItem("prism_user_profile", JSON.stringify(userProfile));
+            updateProfileHeader();
+            updateLikeButtonsState();
+            switchProfileState(true);
+            showToast(`Добро пожаловать, ${name}!`);
+        }
+
+        function logoutUserProfile() {
+            localStorage.removeItem("prism_user_profile");
+            userProfile = { name: "", color: "bg-rose-500", likedPlaces: [] };
+            selectedColor = "bg-rose-500";
+            updateProfileHeader();
+            updateLikeButtonsState();
+            switchProfileState(false);
+            renderColorSelectors('register-colors', selectedColor, 'selectAvatarColor');
+            showToast("Вы вышли из профиля");
+        }
+
+        function switchProfileState(isLoggedIn) {
+            const formState = document.getElementById('profile-form-state');
+            const cabinetState = document.getElementById('profile-cabinet-state');
+
+            if (isLoggedIn) {
+                formState.classList.add('hidden');
+                cabinetState.classList.remove('hidden');
+
+                document.getElementById('cabinet-name').textContent = userProfile.name;
+                const avatar = document.getElementById('cabinet-avatar');
+                avatar.className = `w-12 h-12 rounded-full text-white font-bold flex items-center justify-center text-lg select-none ${userProfile.color}`;
+                avatar.textContent = userProfile.name.charAt(0).toUpperCase();
+
+                renderFavoritesList();
+                renderColorSelectors('cabinet-colors', userProfile.color, 'changeCabinetColor');
+            } else {
+                formState.classList.remove('hidden');
+                cabinetState.classList.add('hidden');
+                document.getElementById('input-username').value = "";
+            }
+        }
+
+        function renderFavoritesList() {
+            const listContainer = document.getElementById('favorites-list');
+            const countContainer = document.getElementById('favorites-count');
+
+            countContainer.textContent = userProfile.likedPlaces.length;
+
+            if (userProfile.likedPlaces.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="text-center py-6 text-zinc-400 text-xs italic">
+                        Здесь будут сохраненные вами места
+                    </div>
+                `;
+                return;
+            }
+
+            listContainer.innerHTML = userProfile.likedPlaces.map(place => `
+                <div class="p-3.5 bg-zinc-50 border border-zinc-100 rounded-xl flex items-center justify-between gap-3 text-left">
+                    <div>
+                        <h6 class="font-extrabold text-zinc-950 text-xs">${place.title}</h6>
+                        <span class="text-[10px] text-zinc-400 font-medium">${place.address}</span>
+                    </div>
+                    <button onclick="toggleLike(${place.id}, '${place.title}', '${place.address}')" class="text-rose-500 hover:text-zinc-400 transition-colors">
+                        ✕
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        const profileModal = document.getElementById('profile-modal');
+        const triggerBtn = document.getElementById('btn-profile-trigger');
+
+        function openProfileModal() {
+            switchProfileState(!!userProfile.name);
+            profileModal.classList.remove('hidden');
+            setTimeout(() => {
+                profileModal.classList.remove('opacity-0');
+                profileModal.querySelector('.modal-content').classList.remove('translate-y-8');
+            }, 50);
+        }
+
+        function closeProfileModal() {
+            profileModal.classList.add('opacity-0');
+            profileModal.querySelector('.modal-content').classList.add('translate-y-8');
+            setTimeout(() => {
+                profileModal.classList.add('hidden');
+            }, 300);
+        }
+
+        triggerBtn.addEventListener('click', openProfileModal);
+
+        window.addEventListener('DOMContentLoaded', initProfile);
     </script>
 </body>
 </html>
